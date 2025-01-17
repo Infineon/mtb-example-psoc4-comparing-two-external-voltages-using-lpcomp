@@ -7,7 +7,7 @@
  * Related Document: See README.md
  *
  *******************************************************************************
- * Copyright 2023, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2023-2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -56,13 +56,20 @@
  */
 #define PDL_CONFIGURATION   (0u)
 
-#ifdef COMPONENT_PSOC4100SP256KB
+#if defined COMPONENT_PSOC4100SP256KB
 #define GPIO_PORT_NUM GPIO_PRT1
 #define GPIO_PIN_NUM 6
 #define GPIO_PORT_NUM_CH GPIO_PRT0
 #define GPIO_PIN_NUM_CH_Pos 2
 #define GPIO_PIN_NUM_CH_Neg 3
 #define LPCOMP_CHANNEL CY_LPCOMP_CHANNEL_1
+#elif defined COMPONENT_PSOC4HVMS64K || COMPONENT_PSOC4HVMS128K
+#define GPIO_PORT_NUM GPIO_PRT0
+#define GPIO_PIN_NUM 5
+#define GPIO_PORT_NUM_CH GPIO_PRT1
+#define GPIO_PIN_NUM_CH_Pos 1
+#define GPIO_PIN_NUM_CH_Neg 2
+#define LPCOMP_CHANNEL CY_LPCOMP_CHANNEL_0
 #else /* COMPONENT_PSOC4100SP, COMPONENT_PSOC4000S */
 #define GPIO_PORT_NUM GPIO_PRT2
 #define GPIO_PIN_NUM 0
@@ -87,11 +94,21 @@ const cy_stc_lpcomp_config_t lpcomp_config =
     .intType = CY_LPCOMP_INTR_RISING,
 };
 
-#ifdef COMPONENT_PSOC4100SP256KB
+#if defined COMPONENT_PSOC4100SP256KB
 cy_stc_gpio_pin_config_t pin_config = {
     /*.outVal     */ 1UL,                       /* Output = High */
     /*.driveMode  */ CY_GPIO_DM_STRONG_IN_OFF,  /* Strong drive, input buffer off */
     /*.hsiom      */ P1_6_GPIO,                 /* Software controlled pin */
+    /*.intEdge    */ CY_GPIO_INTR_DISABLE,      /* Rising edge interrupt */
+    /*.vtrip      */ CY_GPIO_VTRIP_CMOS,        /* CMOS voltage trip */
+    /*.slewRate   */ CY_GPIO_SLEW_FAST,         /* Fast slew rate */
+};
+
+#elif defined COMPONENT_PSOC4HVMS64K || COMPONENT_PSOC4HVMS128K
+cy_stc_gpio_pin_config_t pin_config = {
+    /*.outVal     */ 1UL,                       /* Output = High */
+    /*.driveMode  */ CY_GPIO_DM_STRONG_IN_OFF,  /* Strong drive, input buffer off */
+    /*.hsiom      */ P0_5_GPIO,                 /* Software controlled pin */
     /*.intEdge    */ CY_GPIO_INTR_DISABLE,      /* Rising edge interrupt */
     /*.vtrip      */ CY_GPIO_VTRIP_CMOS,        /* CMOS voltage trip */
     /*.slewRate   */ CY_GPIO_SLEW_FAST,         /* Fast slew rate */
